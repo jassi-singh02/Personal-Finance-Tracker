@@ -1,5 +1,6 @@
 import csv
 import datetime
+import matplotlib.pyplot as plt
 
 DATA_FILE = "data.csv"
 CATEGORIES = ["Food", "Rent", "Travel", "Entertainment", "Other"]
@@ -48,6 +49,50 @@ def delete_categories():
     else:
         print("Category does not exist.")
 
+def show_dashboard():
+    try:
+        with open(DATA_FILE, mode="r") as file:
+            reader = csv.reader(file)
+            expenses = list(reader)
+
+        if not expenses:
+            print("No data to display in dashboard.")
+            return
+
+        # Parse data
+        dates = []
+        amounts = []
+        categories = []
+        for row in expenses:
+            date, amount, category, description = row
+            dates.append(datetime.datetime.fromisoformat(date))
+            amounts.append(float(amount))
+            categories.append(category)
+
+        # --- Pie Chart (expenses by category) ---
+        category_totals = {}
+        for cat, amt in zip(categories, amounts):
+            category_totals[cat] = category_totals.get(cat, 0) + amt
+
+        plt.figure(figsize=(10, 5))
+
+        plt.subplot(1, 2, 1)  # 1 row, 2 cols, first chart
+        plt.pie(category_totals.values(), labels=category_totals.keys(), autopct="%1.1f%%")
+        plt.title("Expenses by Category")
+
+        # --- Line Chart (expenses over time) ---
+        plt.subplot(1, 2, 2)  # second chart
+        plt.plot(dates, amounts, marker="o")
+        plt.title("Expenses Over Time")
+        plt.xlabel("Date")
+        plt.ylabel("Amount ($)")
+        plt.xticks(rotation=45)
+
+        plt.tight_layout()
+        plt.show()
+
+    except FileNotFoundError:
+        print("No expenses recorded yet.")
 
 def main():
     while True:
@@ -56,7 +101,8 @@ def main():
         print("2. View Expenses")
         print("3. Add Category")
         print("4. Delete Category")
-        print("5. Quit")
+        print("5. Show Dashboard")
+        print("6. Quit")
 
         choice = input("Choose an option: ")
 
@@ -82,6 +128,9 @@ def main():
             delete_categories()
 
         elif choice == "5":
+            show_dashboard()
+
+        elif choice == "6":
             break
 
         else:
