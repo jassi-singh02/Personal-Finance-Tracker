@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 DATA_FILE = "data.csv"
 CATEGORIES = ["Food", "Rent", "Travel", "Entertainment", "Other"]
 
-"check in + 9"
+"check in + 10"
 
 def add_expense(amount, category, description=""):
     date = datetime.date.today().isoformat()
